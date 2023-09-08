@@ -3,12 +3,19 @@ package main
 import (
     "fmt"
     "gfx2" // Import the gfx2 library (replace "your-username" with the actual package path)
-    
     "time"
 )
 
 func main() {
-	
+	var deltatime int64
+	deltatime = int64(0)
+	var lasttime int64
+	lasttime = int64(time.Now().UnixMilli())
+	var acceleration int64 = 2
+	var speed int64 = 0
+		
+		
+		
     // Open the graphics window with specified dimensions
     gfx2.Fenster(1000, 800)
 	fmt.Println(gfx2.Grafikspalten())
@@ -24,11 +31,15 @@ func main() {
     gfx2.Transparenz(0)
 
     // Set the sprite's initial velocity
-    var _, velocityY int = 0, -30 // Use int for velocity
-	var positionY int
-	positionY = int(spriteY)
+    var _, velocityY int64 = 0, -30 // Use int for velocity
+	var positionY int64
+	positionY = int64(spriteY)
     // Main game loop
     for {
+		deltatime = (time.Now().UnixMilli()-lasttime)/50
+		lasttime = time.Now().UnixMilli()
+		speed = deltatime * acceleration
+		positionY += speed * deltatime
         // Clear the screen
         gfx2.UpdateAus()
         gfx2.Stiftfarbe(0,0,0)
@@ -68,6 +79,8 @@ func main() {
 
         // Delay for a short time (e.g., 60 frames per second)
         time.Sleep(1000 / 60 * time.Millisecond)
+        
+        
     }
 }
 
