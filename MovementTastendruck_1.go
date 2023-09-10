@@ -7,12 +7,10 @@ import (
 )
 
 func main() {
-	var deltatime int64
-	deltatime = int64(0)
-	var lasttime int64
-	lasttime = int64(time.Now().UnixMilli())
-	var acceleration int64 = 2
-	var speed int64 = 0
+	var timeInterval float64
+	timeInterval = float64(0.1)
+	var acceleration float64 = -9.81
+	var speed float64 = 0
 		
 		
 		
@@ -31,15 +29,14 @@ func main() {
     gfx2.Transparenz(0)
 
     // Set the sprite's initial velocity
-    var _, velocityY int64 = 0, -30 // Use int for velocity
-	var positionY int64
-	positionY = int64(spriteY)
+    var _, velocityY float64 = 0, -90// Use int for velocity
+	var positionY float64
+	positionY = float64(spriteY)
     // Main game loop
     for {
-		deltatime = (time.Now().UnixMilli()-lasttime)/50
-		lasttime = time.Now().UnixMilli()
-		speed = deltatime * acceleration
-		positionY += speed * deltatime
+	
+		speed += timeInterval * acceleration
+		positionY -= speed * timeInterval
         // Clear the screen
         gfx2.UpdateAus()
         gfx2.Stiftfarbe(0,0,0)
