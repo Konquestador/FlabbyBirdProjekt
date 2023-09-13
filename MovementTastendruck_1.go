@@ -6,6 +6,12 @@ import (
     "time"
 )
 
+func gravitation(){
+	
+	
+	
+	}
+
 func main() {
 	var timeInterval float64
 	timeInterval = float64(0.1)
@@ -14,9 +20,8 @@ func main() {
 		
 		
 		
-    // Open the graphics window with specified dimensions
     gfx2.Fenster(1000, 800)
-	fmt.Println(gfx2.Grafikspalten())
+
     // Load an image file for the sprite
     gfx2.LadeBild(uint16(100), uint16(100), "Frame-1.bmp") // Convert int to uint16
     
@@ -31,6 +36,8 @@ func main() {
     // Set the sprite's initial velocity
     var _, velocityY float64 = 0, -90// Use int for velocity
 	var positionY float64
+	
+	
 	positionY = float64(spriteY)
     // Main game loop
     for {
