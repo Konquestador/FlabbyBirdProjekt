@@ -5,7 +5,7 @@ package main
 import (
 	//"fmt"
     "gfx2" // Import the gfx2 library (replace "your-username" with the actual package path)
-    //"time"
+    "time"
     //"math"
 )
 
@@ -15,16 +15,13 @@ import (
 //Main
 func main(){
 	// variablen erstellen
-	//var speed uint16 = 5
-	//var gravity uint16 = 5
-	var birdposx uint16 = 100
-	var birdposy uint16 = 100
-	//var previousTime = time.Now()
-    //var currentTime = time.Now()
-    //var deltaTime float64
-    //var zaehler float64
-	
-//	var direction uint16 = 0
+	var speed float64 = 0
+	var birdposX uint16 = 100
+	var birdposY uint16 = 100
+	var timeInterval float64 = 0.1
+	var acceleration float64 = 15
+	var click int
+	ch := make(chan int)
 	
 	
 	// Erzeuge Fenster
@@ -38,38 +35,76 @@ func main(){
 	gfx2.Cls()
 	
 	// Vogel reinladen
-//    gfx2.LadeBildMitColorKey(birdposx, birdposy, "Frame-1.bmp",0,0,0)
-	gfx2.Transparenz(0)
+	// gfx2.LadeBildMitColorKey(birdposx, birdposy, "Frame-1.bmp",0,0,0)
 	
 	gfx2.LadeBildInsClipboard("Frame-1.bmp")
-	gfx2.Clipboard_einfuegenMitColorKey (birdposx, birdposy, 255,0,0) 
-
-	gfx2.MausLesen1()
+	gfx2.Clipboard_einfuegenMitColorKey (birdposX, birdposY, 255,0,0) 
 	
-	gfx2.UpdateAn() 
-	//for {
-		//gfx2.UpdateAus()
-		//gfx2.Cls()
-		//currentTime = time.Now()
-		//deltaTime = currentTime.Sub(previousTime).Seconds()
+	gfx2.UpdateAn()
+	
+	
+	//Thread starten
+	go Mauslesen(ch)
+	
+	// Main Loop
+	
+    for {
+		select {
+			case click = <-ch:
+				if click == 1 {
+					
+				speed = 40
+				birdposY -= uint16(speed)
+			
+				}
+			default:
+				speed += timeInterval * acceleration
+				birdposY += uint16(speed * timeInterval)
+				
 		
-		//zaehler += deltaTime
+        // Clear the screen
+        gfx2.UpdateAus()
+        gfx2.Cls()
+			
+				
+        if birdposY < 0 {
+			birdposY = 0
+			
+		}else if birdposY > 630 {
+			birdposY = 630
+		}
 		
-		//if zaehler >= 1 {
-			//zaehler = math.Round(zaehler)
-			//speed += uint16(zaehler) * gravity
-			//birdposy += speed
-			//}		
+        // Draw the sprite at its new position
+        gfx2.LadeBild(birdposX, birdposY, "Frame-1.bmp")
+
+        // Update the graphics window
+        gfx2.UpdateAn()
+        
+
+        // Delay for a short time (e.g., 60 frames per second)
+        time.Sleep(1000 / 1000 * time.Millisecond)
+		gfx2.LadeBild(birdposX, birdposY, "Frame-2.bmp")	
+		  time.Sleep(1000 / 5000 * time.Millisecond)
+		  
+		gfx2.LadeBild(birdposX, birdposY, "Frame-3.bmp")
+		  time.Sleep(1000 / 5000 * time.Millisecond)
+		  
+		gfx2.LadeBild(birdposX, birdposY, "Frame-4.bmp")
+		  time.Sleep(1000 / 5000 * time.Millisecond)
+		  
+		}}
+        
+        
+    }
+
+func Mauslesen(ch chan int){
+	for{	
+		taste, status,_,_:=gfx2.MausLesen1()
 		
-		////Ausgabe der Koordinaten zur Kotrolle
-		//fmt.Println(birdposy)
-		
-		
-		////Vogel mit neuen koordinaten reinladen
-		//gfx2.Clipboard_einfuegenMitColorKey (birdposx, birdposy, 255,0,0)
-		
-		//previousTime = currentTime
-		
-		//gfx2.UpdateAn()
-		//}
+			if status == 1 && taste == 1 {
+				ch <- 1
+				
+}	
+	
+}
 }
