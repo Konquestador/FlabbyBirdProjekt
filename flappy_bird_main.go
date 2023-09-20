@@ -8,15 +8,12 @@ import (
     "time"
 )
 
-// Graviation
-
-
 //Main
 func main(){
 	// Variablen erstellen
 	var speed float64 = 0
-	var birdposX uint16 = 100
-	var birdposY uint16 = 100
+	var birdposX float64 = 100
+	var birdposY float64 = 100
 	var timeInterval float64 = 0.1
 	var acceleration float64 = -15
 	var click int
@@ -36,7 +33,7 @@ func main(){
 	// gfx2.LadeBildMitColorKey(birdposx, birdposy, "Frame-1.bmp",0,0,0)
 	
 	gfx2.LadeBildInsClipboard("Frame-1.bmp")
-	gfx2.Clipboard_einfuegenMitColorKey (birdposX, birdposY, 255,0,0) 
+	gfx2.Clipboard_einfuegenMitColorKey (uint16(birdposX), uint16(birdposY), 255,0,0) 
 	
 	gfx2.UpdateAn()
 	
@@ -52,12 +49,12 @@ func main(){
 				if click == 1 {
 					
 				speed = 40
-				birdposY -= uint16(speed)
+				birdposY -= float64(speed)
 			
 				}
 			default:
 				speed += timeInterval * acceleration
-				birdposY -= uint16(speed * timeInterval)
+				birdposY -= float64(speed * timeInterval)
 				
 		
         // Clear the screen
@@ -73,7 +70,7 @@ func main(){
 		}
 		
         // Draw the sprite at its new position
-        gfx2.LadeBild(birdposX, birdposY, "Frame-1.bmp")
+        gfx2.LadeBild(uint16(birdposX), uint16(birdposY), "Frame-1.bmp")
 
         // Update the graphics window
         gfx2.UpdateAn()
@@ -81,13 +78,13 @@ func main(){
 
         // Delay for a short time (e.g., 60 frames per second)
         time.Sleep(1000 / 1000 * time.Millisecond)
-		gfx2.LadeBild(birdposX, birdposY, "Frame-2.bmp")	
+		gfx2.LadeBild(uint16(birdposX),uint16(birdposY), "Frame-2.bmp")	
 		  time.Sleep(1000 / 5000 * time.Millisecond)
 		  
-		gfx2.LadeBild(birdposX, birdposY, "Frame-3.bmp")
+		gfx2.LadeBild(uint16(birdposX), uint16(birdposY), "Frame-3.bmp")
 		  time.Sleep(1000 / 5000 * time.Millisecond)
 		  
-		gfx2.LadeBild(birdposX, birdposY, "Frame-4.bmp")
+		gfx2.LadeBild(uint16(birdposX), uint16(birdposY), "Frame-4.bmp")
 		  time.Sleep(1000 / 5000 * time.Millisecond)
 		  
 		}}
