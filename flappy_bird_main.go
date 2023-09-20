@@ -6,7 +6,6 @@ import (
 	//"fmt"
     "gfx2" // Import the gfx2 library (replace "your-username" with the actual package path)
     "time"
-    //"math"
 )
 
 // Graviation
@@ -14,15 +13,14 @@ import (
 
 //Main
 func main(){
-	// variablen erstellen
+	// Variablen erstellen
 	var speed float64 = 0
 	var birdposX uint16 = 100
 	var birdposY uint16 = 100
 	var timeInterval float64 = 0.1
-	var acceleration float64 = 15
+	var acceleration float64 = -15
 	var click int
 	ch := make(chan int)
-	
 	
 	// Erzeuge Fenster
 	gfx2.Fenster(1000, 800)
@@ -59,7 +57,7 @@ func main(){
 				}
 			default:
 				speed += timeInterval * acceleration
-				birdposY += uint16(speed * timeInterval)
+				birdposY -= uint16(speed * timeInterval)
 				
 		
         // Clear the screen
@@ -103,8 +101,7 @@ func Mauslesen(ch chan int){
 		
 			if status == 1 && taste == 1 {
 				ch <- 1
-				
-}	
-	
+				}	
+	}
 }
-}
+ 
