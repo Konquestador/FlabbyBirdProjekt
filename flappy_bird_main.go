@@ -21,6 +21,7 @@ func main(){
 	
 	// Erzeuge Fenster
 	gfx2.Fenster(1000, 800)
+	gfx2.Fenstertitel ("Flappy Bird")
 	
 	//UpdateAus() um Vogel-Fehler zu vermeiden
 	gfx2.UpdateAus()
@@ -78,13 +79,16 @@ func main(){
 
         // Delay for a short time (e.g., 60 frames per second)
         time.Sleep(1000 / 1000 * time.Millisecond)
-		gfx2.LadeBild(uint16(birdposX),uint16(birdposY), "Frame-2.bmp")	
+		gfx2.LadeBildInsClipboard("Frame-2.bmp")
+		gfx2.Clipboard_einfuegenMitColorKey (uint16(birdposX), uint16(birdposY), 255,0,0)	
 		  time.Sleep(1000 / 5000 * time.Millisecond)
 		  
-		gfx2.LadeBild(uint16(birdposX), uint16(birdposY), "Frame-3.bmp")
+		gfx2.LadeBildInsClipboard("Frame-3.bmp")
+		gfx2.Clipboard_einfuegenMitColorKey (uint16(birdposX), uint16(birdposY), 255,0,0)
 		  time.Sleep(1000 / 5000 * time.Millisecond)
 		  
-		gfx2.LadeBild(uint16(birdposX), uint16(birdposY), "Frame-4.bmp")
+		gfx2.LadeBildInsClipboard("Frame-4.bmp")
+		gfx2.Clipboard_einfuegenMitColorKey (uint16(birdposX), uint16(birdposY), 255,0,0)
 		  time.Sleep(1000 / 5000 * time.Millisecond)
 		  
 		}}
