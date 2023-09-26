@@ -3,10 +3,14 @@ package main
 
 //Imports
 import (
-	//"fmt"
+	"fmt"
     "gfx2" // Import the gfx2 library (replace "your-username" with the actual package path)
     "time"
+    //"image"
+	"os"
 )
+
+
 
 //Main
 func main(){
@@ -15,12 +19,17 @@ func main(){
 	var birdposX float64 = 100
 	var birdposY float64 = 100
 	var timeInterval float64 = 0.1
-	var acceleration float64 = -15
+	var acceleration float64 = -20
 	var click int
 	ch := make(chan int)
-	
+	var windowX int = 1000
+	var windowY int = 800
+
+	//Scale Images
+	scale_Image(windowY)
+		
 	// Erzeuge Fenster
-	gfx2.Fenster(1000, 800)
+	gfx2.Fenster(windowX, windowY)
 	gfx2.Fenstertitel ("Flappy Bird")
 	
 	//UpdateAus() um Vogel-Fehler zu vermeiden
@@ -91,7 +100,8 @@ func main(){
 		gfx2.Clipboard_einfuegenMitColorKey (uint16(birdposX), uint16(birdposY), 255,0,0)
 		  time.Sleep(1000 / 5000 * time.Millisecond)
 		  
-		}}
+		}
+		}//?? Gehört zu select-case statement
         
         
     }
@@ -105,4 +115,33 @@ func Mauslesen(ch chan int){
 				}	
 	}
 }
- 
+
+func scale_Image(windowY int){
+		image_list := []string{"./Frame-1.bmp", "./Frame-2.bmp", "./Frame-3.bmp", "./Frame-4.bmp"}
+		
+		for _, value := range image_list {
+			
+			//Open File
+			file, err := os.Open(value)
+			
+			if err != nil{
+				fmt.Println("Öffnen der Datei fehlgeschlagen!")
+				defer file.Close()
+				}
+			
+			//Decode BMP File
+			img, _, err := image.Decode(file)
+			
+			if err != nil{
+				fmt.Println("Entschlüsseln der Datei fehlgeschlagen!")
+				defer file.Close()
+				}
+				
+			//Resize Image
+			resizedImage := imaging.Resize()
+			
+			}
+}
+
+
+
