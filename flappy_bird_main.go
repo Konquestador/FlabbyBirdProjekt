@@ -6,7 +6,9 @@ import (
 	"fmt"
     "gfx2" // Import the gfx2 library (replace "your-username" with the actual package path)
     "time"
-    //"image"
+    "math"
+    "image"
+	"imaging"
 	"os"
 )
 
@@ -26,7 +28,7 @@ func main(){
 	var windowY int = 800
 
 	//Scale Images
-	scale_Image(windowY)
+	scale_Image(float64(windowY))
 		
 	// Erzeuge Fenster
 	gfx2.Fenster(windowX, windowY)
@@ -117,28 +119,46 @@ func Mauslesen(ch chan int){
 }
 
 func scale_Image(windowY int){
+	
 		image_list := []string{"./Frame-1.bmp", "./Frame-2.bmp", "./Frame-3.bmp", "./Frame-4.bmp"}
+		rescaled_image_list := []string{"./images/Frame-1.bmp", "./images/Frame-2.bmp", "./images/Frame-3.bmp", "./images/Frame-4.bmp"}
 		
-		for _, value := range image_list {
+		//Loop zum scalen aller Bilder
+		for i:=0; i < 4; i++ {
 			
-			//Open File
-			file, err := os.Open(value)
+			//Datei Öffnen
+			file, err := os.Open(image_list[i])
 			
 			if err != nil{
-				fmt.Println("Öffnen der Datei fehlgeschlagen!")
+				fmt.Println("Öffnen der Datei fehlgeschlagen:", err)
 				defer file.Close()
 				}
 			
-			//Decode BMP File
+			//BMP Datei entschlüsseln
 			img, _, err := image.Decode(file)
 			
 			if err != nil{
-				fmt.Println("Entschlüsseln der Datei fehlgeschlagen!")
+				fmt.Println("Entschlüsseln der Datei fehlgeschlagen:", err)
 				defer file.Close()
 				}
 				
-			//Resize Image
-			resizedImage := imaging.Resize()
+			//Verhältnis WindowY <--> BirdX = 0,25 
+			//Verhältnis WindowY <--> BirdY = 0,225
+
+			//Festlegen der neuen Größe des Vogels:
+			
+			var width int = int(math.Round(windowY * 0.25))
+			var height int = int(math.Round(windowY * 0.225))
+			
+			//Bildgröße verändern
+			resizedImage := imaging.Resize(img, widht, height, imaging.NearestNeighbor)
+			
+			//Neues Bild speichern
+			err = imaging.Save(resizedImage, rescaled_image_list[i]
+			if err != nil{
+				fmt.Println("Speichern der Datei fehlgeschlagen:", err)
+				return
+				}
 			
 			}
 }
