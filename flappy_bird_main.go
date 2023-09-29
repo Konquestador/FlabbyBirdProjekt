@@ -1,18 +1,15 @@
 package main
 
-
 //Imports
 import (
 	"fmt"
-    "gfx2" // Import the gfx2 library (replace "your-username" with the actual package path)
+    "gfx2"
     "time"
     "math"
     "image"
 	"imaging"
 	"os"
 )
-
-
 
 //Main
 func main(){
@@ -24,8 +21,8 @@ func main(){
 	var acceleration float64 = -20
 	var click int
 	ch := make(chan int)
-	var windowX int = 1000
-	var windowY int = 800
+	var windowX uint16 = 1000
+	var windowY uint16 = 800
 
 	//Scale Images
 	scale_Image(float64(windowY))
@@ -82,7 +79,7 @@ func main(){
 		}
 		
         // Draw the sprite at its new position
-        gfx2.LadeBild(uint16(birdposX), uint16(birdposY), "Frame-1.bmp")
+        gfx2.LadeBild(uint16(birdposX), uint16(birdposY), "./images/Frame-1.bmp")
 
         // Update the graphics window
         gfx2.UpdateAn()
@@ -90,21 +87,20 @@ func main(){
 
         // Delay for a short time (e.g., 60 frames per second)
         time.Sleep(1000 / 1000 * time.Millisecond)
-		gfx2.LadeBildInsClipboard("Frame-2.bmp")
+		gfx2.LadeBildInsClipboard("./images/Frame-2.bmp")
 		gfx2.Clipboard_einfuegenMitColorKey (uint16(birdposX), uint16(birdposY), 255,0,0)	
 		  time.Sleep(1000 / 5000 * time.Millisecond)
 		  
-		gfx2.LadeBildInsClipboard("Frame-3.bmp")
+		gfx2.LadeBildInsClipboard("./images/Frame-3.bmp")
 		gfx2.Clipboard_einfuegenMitColorKey (uint16(birdposX), uint16(birdposY), 255,0,0)
 		  time.Sleep(1000 / 5000 * time.Millisecond)
 		  
-		gfx2.LadeBildInsClipboard("Frame-4.bmp")
+		gfx2.LadeBildInsClipboard("./images/Frame-4.bmp")
 		gfx2.Clipboard_einfuegenMitColorKey (uint16(birdposX), uint16(birdposY), 255,0,0)
 		  time.Sleep(1000 / 5000 * time.Millisecond)
 		  
 		}
 		}//?? Gehört zu select-case statement
-        
         
     }
 
@@ -118,7 +114,7 @@ func Mauslesen(ch chan int){
 	}
 }
 
-func scale_Image(windowY int){
+func scale_Image(windowY float64){
 	
 		image_list := []string{"./Frame-1.bmp", "./Frame-2.bmp", "./Frame-3.bmp", "./Frame-4.bmp"}
 		rescaled_image_list := []string{"./images/Frame-1.bmp", "./images/Frame-2.bmp", "./images/Frame-3.bmp", "./images/Frame-4.bmp"}
@@ -151,15 +147,14 @@ func scale_Image(windowY int){
 			var height int = int(math.Round(windowY * 0.225))
 			
 			//Bildgröße verändern
-			resizedImage := imaging.Resize(img, widht, height, imaging.NearestNeighbor)
+			resizedImage := imaging.Resize(img, width, height, imaging.NearestNeighbor)
 			
 			//Neues Bild speichern
-			err = imaging.Save(resizedImage, rescaled_image_list[i]
+			err = imaging.Save(resizedImage, rescaled_image_list[i])
 			if err != nil{
 				fmt.Println("Speichern der Datei fehlgeschlagen:", err)
 				return
-				}
-			
+				}		
 			}
 }
 
