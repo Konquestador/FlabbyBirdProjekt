@@ -39,12 +39,9 @@ func main(){
 	gfx2.Stiftfarbe(127,255,212)
 	gfx2.Cls()
 	
-	// Vogel reinladen
-	// gfx2.LadeBildMitColorKey(birdposx, birdposy, "Frame-1.bmp",0,0,0)
+	//Vogel in die Mitte des Fensters laden
+	gfx2.LadeBildMitColorKey (uint16(birdposX), uint16(windowY / 2) , "./images/Frame-1.bmp", uint8(255), uint8(0),uint8(0))
 	
-	//Clipboard_einfuegenMitColorKey nimmt y-Wert als uint16
-	gfx2.LadeBildInsClipboard("./images/Frame-1.bmp")
-	gfx2.Clipboard_einfuegenMitColorKey(uint16(birdposX), uint16(birdposY), 255,0,0) 
 	
 	gfx2.UpdateAn()
 	
@@ -79,26 +76,27 @@ func main(){
 			birdposY = windowY - height
 		}
 
-        // Draw the sprite at its new position
-        gfx2.LadeBild(uint16(birdposX), uint16(birdposY), "./images/Frame-1.bmp")
-
         // Update the graphics window
         gfx2.UpdateAn()
+		
+		fmt.Println("Lauf")
+		
+        //Bilder einfügen (Time Sleep um flüssige Animation zu ermöglichen, uint8() um Einfügefehler zu vermeiden)
+        gfx2.LadeBildMitColorKey (uint16(birdposX), uint16(birdposY), "./images/Frame-1.bmp", uint8(255), uint8(0),uint8(0))
         
-
-        // Delay for a short time (e.g., 60 frames per second)
         time.Sleep(1000 / 1000 * time.Millisecond)
-		gfx2.LadeBildInsClipboard("./images/Frame-2.bmp")
-		gfx2.Clipboard_einfuegenMitColorKey (uint16(birdposX), uint16(birdposY), 255,0,0)	
-		  time.Sleep(1000 / 5000 * time.Millisecond)
+        
+		gfx2.LadeBildMitColorKey (uint16(birdposX), uint16(birdposY), "./images/Frame-2.bmp", uint8(255), uint8(0),uint8(0))
+		
+		time.Sleep(1000 / 5000 * time.Millisecond)
 		  
-		gfx2.LadeBildInsClipboard("./images/Frame-3.bmp")
-		gfx2.Clipboard_einfuegenMitColorKey (uint16(birdposX), uint16(birdposY), 255,0,0)
-		  time.Sleep(1000 / 5000 * time.Millisecond)
-		  
-		gfx2.LadeBildInsClipboard("./images/Frame-4.bmp")
-		gfx2.Clipboard_einfuegenMitColorKey (uint16(birdposX), uint16(birdposY), 255,0,0)
-		  time.Sleep(1000 / 5000 * time.Millisecond)
+		gfx2.LadeBildMitColorKey (uint16(birdposX), uint16(birdposY), "./images/Frame-3.bmp", uint8(255), uint8(0),uint8(0))
+		
+		time.Sleep(1000 / 5000 * time.Millisecond)
+		 
+		gfx2.LadeBildMitColorKey (uint16(birdposX), uint16(birdposY), "./images/Frame-4.bmp", uint8(255), uint8(0),uint8(0))
+		
+		time.Sleep(1000 / 5000 * time.Millisecond)
 		  
 		}
 		}//?? Gehört zu select-case statement
