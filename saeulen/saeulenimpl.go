@@ -13,6 +13,7 @@ type data struct{
 	loch uint16
 	r,g,b,hr,hg,hb uint8
 	highlight bool
+	geschwindigkeit uint16
 }
 
 func New () *data {
@@ -45,12 +46,12 @@ func (s *data) String () string {
 }
 
 func (s *data) Move (sleep_time int) {
+	//~ var Geschwindigkeit int
+	s.geschwindigkeit = 3
 	if s.xWert != 0 {
-		s.xWert--
+		s.xWert = s.xWert - s.geschwindigkeit
 		//time.Sleep(time.Duration(sleep_time)* time.Microsecond)	- bugged leider, sonst macht das die Säulen langsamer
-		}	else {
-			s.xWert--
-			}
+		 }	
 }
 
 func (s *data) Draw() {
