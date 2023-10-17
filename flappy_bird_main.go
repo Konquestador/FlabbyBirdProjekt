@@ -22,7 +22,7 @@ func main(){
 	var acceleration int = -10
 	var click int
 	ch := make(chan int)
-	var windowX uint16 = 1000 //Wird nur fürs Fenster genutzt (Fenster nimmt x,y als uint16)
+	var windowX uint16 = 1000 //Wird nur fürs Fenster genutzt (Fenster nimmt x als uint16)
 	var windowY int = 800 //Wird unter Anderem für Scale Funktion genutzt, deswegen int 
 	var height int
 	//Säulen
@@ -66,74 +66,70 @@ func main(){
 			default:
 				speed += acceleration / timeInterval 
 				birdposY -= speed / timeInterval
-		if zähler%600==0{
-			var s saeulen.Saeule
-			s = saeulen.New()
-			s.SetzeZufallswerte()
-			liste = append(liste,s)
-		}			
-		
-		
-        gfx2.UpdateAus()
-		gfx2.Stiftfarbe(255,255,255)
-		gfx2.Cls()
-	//Zeichnet die Säule auf der Höhe des Fensters
+				
+				if zähler%600==0{
+					var s saeulen.Saeule
+					s = saeulen.New()
+					s.SetzeZufallswerte()
+					liste = append(liste,s)
+				}			
+				
+				gfx2.UpdateAus()
+				gfx2.Stiftfarbe(255,255,255)
+				gfx2.Cls()
+				
+				//Zeichnet die Säule auf der Höhe des Fensters
+			   for i:=0;i<len(liste);i++{
+				   liste[i].Draw()
+			   }
+			   //~ gfx2.UpdateAn()
+			   
+			   var nliste []saeulen.Saeule
+			   
+			   for i:=0;i<len(liste);i++{
+				   liste[i].Move(0)
+				   if liste[i].GibXWert() < 10000 {
+					   nliste = append(nliste,liste[i])
+				   }	    
+				}
+				
+				liste = nliste
+				zähler ++
+				// Clear the screen
+				//~ gfx2.UpdateAus()
+				//~ gfx2.Cls()		
+				
+				if birdposY < 0 {
+					birdposY = 0
+				
+				} else if birdposY > (windowY-height) {
+					birdposY = windowY - height
+				}
 
-	   for i:=0;i<len(liste);i++{
-		   liste[i].Draw()
-	   }
-	   //~ gfx2.UpdateAn()
-	   
-	   var nliste []saeulen.Saeule
-	   
-	   for i:=0;i<len(liste);i++{
-		   liste[i].Move(0)
-		   if liste[i].GibXWert() < 10000 {
-			   nliste = append(nliste,liste[i])
-		   }	    
-		}
-		
-		liste = nliste
-		zähler ++
-        // Clear the screen
-        //~ gfx2.UpdateAus()
-        //~ gfx2.Cls()		
-		
-      
-			
-		if birdposY < 0 {
-			birdposY = 0
-		
-		} else if birdposY > (windowY-height) {
-			birdposY = windowY - height
-		}
-
-        // Update the graphics window
-        gfx2.UpdateAn()
-		
-		fmt.Println("Lauf")
-		
-        //Bilder einfügen (Time Sleep um flüssige Animation zu ermöglichen, uint8() um Einfügefehler zu vermeiden)
-        gfx2.LadeBildMitColorKey (uint16(birdposX), uint16(birdposY), "./images/Frame-1.bmp", uint8(255), uint8(0),uint8(0))
-        
-        //~ time.Sleep(1000 / 1000 * time.Millisecond)
-        
-		gfx2.LadeBildMitColorKey (uint16(birdposX), uint16(birdposY), "./images/Frame-2.bmp", uint8(255), uint8(0),uint8(0))
-		
-		//~ time.Sleep(1000 / 5000 * time.Millisecond)
-		  
-		gfx2.LadeBildMitColorKey (uint16(birdposX), uint16(birdposY), "./images/Frame-3.bmp", uint8(255), uint8(0),uint8(0))
-		
-		//~ time.Sleep(1000 / 5000 * time.Millisecond)
-		 
-		gfx2.LadeBildMitColorKey (uint16(birdposX), uint16(birdposY), "./images/Frame-4.bmp", uint8(255), uint8(0),uint8(0))
-		
-		//~ time.Sleep(1000 / 5000 * time.Millisecond)
-		  
-		}
-		}//?? Gehört zu select-case statement
-        
-    }
+				// Update the graphics window
+				gfx2.UpdateAn()
+				
+				//Bilder einfügen (Time Sleep um flüssige Animation zu ermöglichen, uint8() um Einfügefehler zu vermeiden)
+				gfx2.LadeBildMitColorKey (uint16(birdposX), uint16(birdposY), "./images/Frame-1.bmp", uint8(255), uint8(0),uint8(0))
+				
+				//~ time.Sleep(1000 / 1000 * time.Millisecond)
+				
+				gfx2.LadeBildMitColorKey (uint16(birdposX), uint16(birdposY), "./images/Frame-2.bmp", uint8(255), uint8(0),uint8(0))
+				
+				//~ time.Sleep(1000 / 5000 * time.Millisecond)
+				  
+				gfx2.LadeBildMitColorKey (uint16(birdposX), uint16(birdposY), "./images/Frame-3.bmp", uint8(255), uint8(0),uint8(0))
+				
+				//~ time.Sleep(1000 / 5000 * time.Millisecond)
+				 
+				gfx2.LadeBildMitColorKey (uint16(birdposX), uint16(birdposY), "./images/Frame-4.bmp", uint8(255), uint8(0),uint8(0))
+				
+				//~ time.Sleep(1000 / 5000 * time.Millisecond)
+				  
+				}
+				}//?? Gehört zu select-case statement
+				
+			}
 
 func Mauslesen(ch chan int){
 	for{	
@@ -155,8 +151,8 @@ func scale_Image(windowY int) int{
 		
 		//Festlegen der neuen Größe des Vogels:
 			
-		var width int = (windowY * 25) / 100 
-		var height int = (windowY * 225) / 1000
+		var width int = (windowY * 1875) / 10000
+		var height int = (windowY * 16) / 100
 		
 		//Ausgeben zum Debuggen
 		fmt.Println(width)
