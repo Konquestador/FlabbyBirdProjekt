@@ -8,6 +8,8 @@ import (
 	//"time"
 )
 
+
+
 func main () {
 
 	//Öffnet das Grafikfenster
@@ -17,7 +19,11 @@ func main () {
 	
 	var liste []saeulen.Saeule
 
+		// Säulen reinladen
+	//gfx2.LadeBildMitColorKey(s.xWert, s.hoehe, "saeule.bmp",0,0,0)
+
     for i:=0;i<=10000;i++{
+			//bestimmt den Säulenabstand
 		if zähler%500==0{
 			var s saeulen.Saeule
 			s = saeulen.New()

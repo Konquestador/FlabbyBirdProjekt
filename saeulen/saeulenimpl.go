@@ -26,7 +26,7 @@ func (s *data) SetzeZufallswerte() {
 	zufallszahlen.Randomisieren()
 	s.xWert = gfx2.Grafikspalten()
 	s.hoehe = uint16(zufallszahlen.Zufallszahl(100,500))
-	s.loch = uint16(zufallszahlen.Zufallszahl(150,200))
+	s.loch = uint16(zufallszahlen.Zufallszahl(200,300))
 }
 
 func (s *data) GibXWert()  uint16{
@@ -46,11 +46,9 @@ func (s *data) String () string {
 }
 
 func (s *data) Move (sleep_time int) {
-	//~ var Geschwindigkeit int
 	s.geschwindigkeit = 3
 	if s.xWert != 0 {
 		s.xWert = s.xWert - s.geschwindigkeit
-		//time.Sleep(time.Duration(sleep_time)* time.Microsecond)	- bugged leider, sonst macht das die Säulen langsamer
 		 }	
 }
 
@@ -66,4 +64,8 @@ func (s *data) Draw() {
 	}
 	gfx2.Vollrechteck(s.xWert,0,100,s.hoehe)
 	gfx2.Vollrechteck(s.xWert,s.hoehe+s.loch,100,fensterhoehe-(s.hoehe+s.loch))
+    gfx2.LadeBildMitColorKey(s.xWert-186, s.hoehe, "saeule.bmp", uint8(237), uint8(28), uint8(36))
 }
+
+//~ func (s *data) Kollision() {
+	//~ if s.xWert == 
