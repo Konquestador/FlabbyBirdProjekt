@@ -5,7 +5,7 @@ import (
 	"gfx2"
 	//"fmt"
 	//"zufallszahlen"
-	//"time"
+	//~ "time"
 )
 
 
@@ -24,7 +24,7 @@ func main () {
 
     for i:=0;i<=10000;i++{
 			//bestimmt den Säulenabstand
-		if zähler%500==0{
+		if zähler%200==0{
 			var s saeulen.Saeule
 			s = saeulen.New()
 			s.SetzeZufallswerte()

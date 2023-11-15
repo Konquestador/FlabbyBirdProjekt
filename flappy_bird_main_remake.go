@@ -2,32 +2,33 @@ package main
 
 //Imports
 import (
-	"fmt"
-    "gfx2"
+	//~ "fmt"
+    //~ "gfx2"
     //~ "time"
-    //"math"
-    "image"
-	"imaging"
-	"os"
-	"saeulen"
+    //~ //"math"
+    //~ "image"
+	//~ "imaging"
+	//~ "os"
+	//~ "saeulen"
 )
 
 //Main
 func main(){
 	// Variablen erstellen
-	var speed int = 0
-	var birdposX int = 100
-	var birdposY int = 100
-	var timeInterval int = 10
-	var acceleration int = -10
-	var click int
-	ch := make(chan int)
+	//~ var speed int = 0
+	//~ var birdposX int = 100
+	//~ var birdposY int = 100
+	//~ var timeInterval int = 10
+	//~ var acceleration int = -10
+	//~ var click int
+	//~ ch := make(chan int)
+	koordinaten := make(chan int)
 	var windowX uint16 = 1000 //Wird nur fürs Fenster genutzt (Fenster nimmt x als uint16)
 	var windowY int = 800 //Wird unter Anderem für Scale Funktion genutzt, deswegen int 
-	var height int
-	//Säulen
-	var zähler int
-	var liste []saeulen.Saeule
+	//~ var height int
+	//~ //Säulen
+	//~ var zähler int
+	//~ var liste []saeulen.Saeule
 	//Scale Images
 	height = scale_Image(windowY)
 		
@@ -43,82 +44,82 @@ func main(){
 	gfx2.Cls()
 	
 	//Vogel in die Mitte des Fensters laden
-	gfx2.LadeBildMitColorKey (uint16(birdposX), uint16(windowY / 2) , "./images/Frame-1.bmp", uint8(255), uint8(0),uint8(0))
+	gfx2.LadeBildMitColorKey (uint16(birdposX), uint16(windowY / 2) , "./images/resized/Frame-1.bmp", uint8(255), uint8(0),uint8(0))
 	
 	
-	gfx2.UpdateAn()
+	//~ gfx2.UpdateAn()
 	
 	
-	//Thread starten
-	go Mauslesen(ch)
+	//~ //Thread starten
+	//~ go Mauslesen(ch)
 	
-	// Main Loop
+	//~ // Main Loop
 	
-    for {
-		if zähler%600==0{
-			var s saeulen.Saeule
-			s = saeulen.New()
-			s.SetzeZufallswerte()
-			liste = append(liste,s)
-			}			
+    //~ for {
+		//~ if zähler%600==0{
+			//~ var s saeulen.Saeule
+			//~ s = saeulen.New()
+			//~ s.SetzeZufallswerte()
+			//~ liste = append(liste,s)
+			//~ }			
 				
-		gfx2.UpdateAus()
-		gfx2.Stiftfarbe(255,255,255)
-		gfx2.Cls()
+		//~ gfx2.UpdateAus()
+		//~ gfx2.Stiftfarbe(255,255,255)
+		//~ gfx2.Cls()
 				
-		//Zeichnet die Säule auf der Höhe des Fensters
-		for i:=0;i<len(liste);i++{
-			liste[i].Draw()
-			}
+		//~ //Zeichnet die Säule auf der Höhe des Fensters
+		//~ for i:=0;i<len(liste);i++{
+			//~ liste[i].Draw()
+			//~ }
 			
-		gfx2.UpdateAn()
+		//~ gfx2.UpdateAn()
 			   
-		var nliste []saeulen.Saeule
+		//~ var nliste []saeulen.Saeule
 			   
-		for i:=0;i<len(liste);i++{
-			liste[i].Move(0)
-			if liste[i].GibXWert() < 10000 {
-				nliste = append(nliste,liste[i])
-			}	    
-		}
+		//~ for i:=0;i<len(liste);i++{
+			//~ liste[i].Move(0)
+			//~ if liste[i].GibXWert() < 10000 {
+				//~ nliste = append(nliste,liste[i])
+			//~ }	    
+		//~ }
 				
-		liste = nliste
-		zähler++
+		//~ liste = nliste
+		//~ zähler++
 				
-		select{
-			case click = <-ch:
-				if click == 1 {
+		//~ select{
+			//~ case click = <-ch:
+				//~ if click == 1 {
 					
-					speed = 30
-					birdposY -= speed
+					//~ speed = 30
+					//~ birdposY -= speed
 					
-					fmt.Println("Click")
+					//~ fmt.Println("Click")
 
-					gfx2.UpdateAn()
+					//~ gfx2.UpdateAn()
 
 					  
-					gfx2.LadeBildMitColorKey(uint16(birdposX), uint16(birdposY), "./images/resized/Frame-3.bmp", uint8(255), uint8(0),uint8(0))
-				}
+					//~ gfx2.LadeBildMitColorKey(uint16(birdposX), uint16(birdposY), "./images/Frame-3.bmp", uint8(255), uint8(0),uint8(0))
+				//~ }
 				
-			default:
-				speed += acceleration / timeInterval 
-				birdposY -= speed / timeInterval
+			//~ default:
+				//~ speed += acceleration / timeInterval 
+				//~ birdposY -= speed / timeInterval
 				
 
-				// Clear the screen
-				//~ gfx2.UpdateAus()
-				//~ gfx2.Cls()		
+				//~ // Clear the screen
+				gfx2.UpdateAus()
+				gfx2.Cls()		
 				
-				if birdposY < 0 {
-					birdposY = 0
+				//~ if birdposY < 0 {
+					//~ birdposY = 0
 				
-				} else if birdposY > (windowY-height) {
-					birdposY = windowY - height
-				}
+				//~ } else if birdposY > (windowY-height) {
+					//~ birdposY = windowY - height
+				//~ }
 				
-				gfx2.LadeBildMitColorKey (uint16(birdposX), uint16(birdposY), "./images/resized/Frame-1.bmp", uint8(255), uint8(0),uint8(0))
-		}
-	}
+				//~ gfx2.LadeBildMitColorKey (uint16(birdposX), uint16(birdposY), "./images/Frame-1.bmp", uint8(255), uint8(0),uint8(0))
+		//~ }
+	//~ }
 				
 }
 
@@ -132,10 +133,16 @@ func Mauslesen(ch chan int){
 	}
 }
 
+func saeulen_move(koordinaten chan int){
+	
+	
+	}
+
 func scale_Image(windowY int) int{
 	
 		image_list := []string{"./images/original/Frame-1.bmp", "./images/original/Frame-2.bmp", "./images/original/Frame-3.bmp", "./images/original/Frame-4.bmp"}
 		rescaled_image_list := []string{"./images/resized/Frame-1.bmp", "./images/resized/Frame-2.bmp", "./images/resized/Frame-3.bmp", "./images/resized/Frame-4.bmp"}
+		
 		//Verhältnis WindowY <--> BirdX = 0,1875 == 875 / 10000 (um float zu vermeiden)
 		//Verhältnis WindowY <--> BirdY = 0,16 == 16 / 100 (um float zu vermeiden)
 		
