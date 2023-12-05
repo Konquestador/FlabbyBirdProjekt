@@ -9,6 +9,8 @@ import (
 
 type data struct{
 	xWert uint16
+	breite uint16
+	rXWert int
 	hoehe uint16
 	loch uint16
 	r,g,b,hr,hg,hb uint8
@@ -19,6 +21,7 @@ type data struct{
 func New () *data {
 	var s *data
 	s = new(data)
+	s.breite=100
 	return s
 }
 
@@ -45,11 +48,19 @@ func (s *data) String () string {
 	return erg
 }
 
-func (s *data) Move (sleep_time int) {
-	s.geschwindigkeit = 3
-	if s.xWert != 0 {
+func (s *data) Move () {
+	s.geschwindigkeit = 1
+	nx:=int(s.xWert)-int(s.geschwindigkeit)+s.rXWert
+	fmt.Println(nx)
+	if nx>0 {
 		s.xWert = s.xWert - s.geschwindigkeit
-		 }	
+	}else if nx < (-100) {
+		s.xWert = 20000
+	}else{
+		s.xWert=0
+		s.breite=100-uint16(-1*nx)
+		s.rXWert = nx
+	} 
 }
 
 func (s *data) Draw() {
@@ -62,8 +73,8 @@ func (s *data) Draw() {
 	} else{
 		gfx2.Stiftfarbe(s.r,s.g,s.b)
 	}
-	gfx2.Vollrechteck(s.xWert,0,100,s.hoehe)
-	gfx2.Vollrechteck(s.xWert,s.hoehe+s.loch,100,fensterhoehe-(s.hoehe+s.loch))
+	gfx2.Vollrechteck(s.xWert,0,s.breite,s.hoehe)
+	gfx2.Vollrechteck(s.xWert,s.hoehe+s.loch,s.breite,fensterhoehe-(s.hoehe+s.loch))
     gfx2.LadeBildMitColorKey(s.xWert-186, s.hoehe, "saeule.bmp", uint8(237), uint8(28), uint8(36))
 }
 

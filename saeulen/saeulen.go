@@ -19,9 +19,16 @@ Draw()
  
 String () string
  
-Move (sleep_time int)
+Move ()
 
 SetzeZufallswerte()
 
 GibXWert() uint16
+}
+
+
+func MoveList(l []Saeule){
+	for i:=0;i<len(l);i++{
+		l[i].Move()
+	}
 }

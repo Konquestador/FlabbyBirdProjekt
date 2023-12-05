@@ -13,7 +13,7 @@ import (
 func main () {
 
 	//Öffnet das Grafikfenster
-    gfx2.Fenster(800, 600)
+    gfx2.Fenster(1000, 800)
 
 	var zähler int
 	
@@ -24,7 +24,7 @@ func main () {
 
     for i:=0;i<=10000;i++{
 			//bestimmt den Säulenabstand
-		if zähler%200==0{
+		if zähler%400==0{
 			var s saeulen.Saeule
 			s = saeulen.New()
 			s.SetzeZufallswerte()
@@ -45,7 +45,7 @@ func main () {
 	   var nliste []saeulen.Saeule
 	   
 	   for i:=0;i<len(liste);i++{
-		   liste[i].Move(0)
+		   liste[i].Move()
 		   if liste[i].GibXWert() < 10000 {
 			   nliste = append(nliste,liste[i])
 		   }	    
