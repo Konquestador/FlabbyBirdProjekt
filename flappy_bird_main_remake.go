@@ -282,6 +282,7 @@ func collision(birdposX int, birdposY int, width int, height int, touchAbove boo
 				s.Touch()
 			}
 		}
+		
 	}
 	return touchAbove, touchBelow, touchoutside //Gibt immer die Werte zurück
 }
