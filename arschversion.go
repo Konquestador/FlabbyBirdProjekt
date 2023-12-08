@@ -10,28 +10,22 @@ import (
 	"os"
 	"saeulen"
 	"strconv"
+	//~ "os/exec"
+	//~ "runtime"
 )
 
 //Main
 func main(){
+
 	// Variablen erstellen
-	
-	//Fenster & Vogel:
+
+	//Festgelegte Größen:
+	var windowX int = 1000 //Wird nur fürs Fenster genutzt (Fenster nimmt x als uint16)
 	var windowY int = 800 //Wird unter Anderem für Scale Funktion genutzt, deswegen int 
 	var height int
+
 	var birdposX int = 100
 	var birdposY int = windowY / 10 //Damit der Vogel anfangs im oberen Zehntel spwant
-	var endbirdposY int
-	
-	//Gravity
-	var gravity float32 = 2.0
-	var factor float32 = 1.0
-	var speed int = 0	
-	
-	
-	//Counter
-	var counterstr string
-	var counter int = 0
 	
 	//Zeitberechnungen:
 	start := time.Now() //Einmalige Startzeit, um die duration-Berechnung am Anfang der for-Schleife zu ermöglichen
@@ -44,6 +38,13 @@ func main(){
 	var pillarspwanms int = 0 //(Nur verwendet fürs Erstellen neuer Säulen)
 	var pillarmovems int = 0 //(Nur verwendet fürs Bewegen der Säulen)
 	
+	//Gravity
+	var gravity float32 = 2.0
+	var factor float32 = 1.0
+	var speed int = 0
+	
+	var counter int = 0
+	
 	//Boolesche Werte
 	var update bool = false
 	var jump bool = false
@@ -52,11 +53,15 @@ func main(){
 	var touchAbove bool = false
 	var touchBelow bool = false
 	var touchoutside bool = false
+	//~ var ended bool = false
+	//~ var birdInHole bool = false
 	
 	
-	//Säulen
+	
+	var counterstr string
+	var endbirdposY int
+	
 	var liste []saeulen.Saeule
-	var leereliste []saeulen.Saeule
 	
 	//Channel 
 	click_channel := make(chan int, 1)
@@ -65,68 +70,37 @@ func main(){
 	height, width := scale_Image(windowY)
 	
 	// Erzeuge Fenster
-	gfx2.Fenster(uint16(1000), uint16(800))
+	gfx2.Fenster(uint16(windowX), uint16(windowY))
 	gfx2.Fenstertitel ("Flappy Bird")
 	
-	//UpdateAus() um Anzeigefehler zu vermeiden
+	//Schriftart festlegen
+	gfx2.SetzeFont("./schriftart.ttf", 100)
+	
+	//UpdateAus() um Vogel-Fehler zu vermeiden
 	gfx2.UpdateAus()
 	
-	//Startbildschirm:
-	
-	//Hintergrund
-	clear()
-	
-	//Vogel und Buttons reinladen
-	gfx2.LadeBildMitColorKey (uint16(birdposX), uint16(birdposY) , "./images/resized/Frame-1.bmp", uint8(135), uint8(206),uint8(250))
-	gfx2.LadeBildMitColorKey(uint16(251), uint16(600), "./playbutton.bmp", uint8(255), uint8(0),uint8(0))
-	gfx2.LadeBildMitColorKey(uint16(501), uint16(600), "./quitbutton.bmp", uint8(255), uint8(0),uint8(0))
-	
-	//Buttonbeschriftung
-	gfx2.SetzeFont("./schriftart.ttf", 70)//Schritart und Größe festlegen
-	gfx2.Stiftfarbe(255,230,5)
-	gfx2.SchreibeFont(uint16(540), uint16(620), "QUIT")
-	gfx2.UpdateAn()
-	
-	//Abfrage ob einer der Buttons gedrückt wurde
-	for{
-		mtaste, mstatus, mx, my:=gfx2.MausLesen1()
-		if mstatus == 1 || mstatus == -1{
-			if mtaste == 1 && mx >= 501 && mx <= 751 && my >= 600 && my <= 775{//Quit-Button
-				gfx2.FensterAus() 
-				break  
-			}else if mtaste == 1 && mx >= 251 && mx <= 376 && my >= 600 && my <= 775{//Play-Button --> Es wird davon ausgegangen, dass man nicht ausversehen neben den Button klickt, ohne weiterspielen zu wollen, weswegen auf eine dreieckige Hitbox verzichtet wurde
-				break
-			}
-		}
-	}
-	
-	//Schriftart für den Counter festlegen
-	gfx2.SetzeFont("./schriftart.ttf", 150)
-	
     //Hintergrund
-	clear()
+	gfx2.Stiftfarbe(127,255,212)
+	gfx2.Cls()
 	
 	//Vogel in die Mitte des Fensters laden
-	gfx2.LadeBildMitColorKey (uint16(birdposX), uint16(birdposY) , "./images/resized/Frame-1.bmp", uint8(135), uint8(206),uint8(250))
+	gfx2.LadeBildMitColorKey (uint16(birdposX), uint16(birdposY) , "./images/resized/Frame-1.bmp", uint8(255), uint8(255),uint8(0))
 	
 	gfx2.UpdateAn()
 	
 	//Threads starten
 	go mauslesen(click_channel)
-	go tastaturlesen(click_channel)
-	
-	//Starten des Spielloops
+start:
 	for{
+		time.Sleep(10 * time.Millisecond) // Add a small delay in the main loop
+
 		duration := time.Since(start) //Berechnung der Dauer der Berechnung bzw. einem Loop-Durchlauf
 		durationms := int(duration.Microseconds()) //Umwandlung der Zeit in Microsekunden (Da der Computer so schnell rechnet, kann man nur mit diesen kleinen Werten arbeiten)
-		
-		//Summe der einzelnen Durchlaufdauern --> siehe Zeile 39
 		durationmsall += durationms	
 		pillarspwanms += durationms
 		pillarmovems += durationms
-		start = time.Now() //Festlegen der Startzeit des Loops um ernuet um die Geschwindigkeit zu messen
+		start = time.Now()
 		
-		//Falsche Zeitwerte für die erste Runde eliminieren
 		if firstRound{
 			durationmsall = 0
 			pillarspwanms = 0
@@ -137,73 +111,81 @@ func main(){
 		//Berechnung ob der Vogel sich im Loch befindet. Wichtig um nachher bei der Kollision herauszuinden, ob der Vogel von außen oder im Loch gegen die Säule traf
 		if len(liste) != 0{ //Wenn es überhaupt eine Säule gibt:
 			for i:=0;i<len(liste);i++{ //Berechne es für jede Säule, die in der Liste ist und sich damit im Fenster befindet
-				if birdposY >= int(liste[i].GibHoehe()) && birdposY + height <= int(liste[i].GibHoehe() + liste[i].GibLoch()){//Wenn der Vogel im Loch ist (Oberer Rand des Vogels muss größer sein, als die Höhe der Säule, aber kleiner als Die Höhe der Säule + die Lochgröße)
-					liste[i].InHole()//Eigenschaft der Säule wird neu gesetzt: Vogel befindet sich im Loch
-				}else{
-					liste[i].NotInHole()//Eigenschaft der Säule wird neu gesetzt: Vogel befindet sich nicht im Loch
-				}
+					if birdposY >= int(liste[i].GibHoehe()) && birdposY + height <= int(liste[i].GibHoehe() + liste[i].GibLoch()){//Wenn der Vogel im Loch ist (Oberer Rand des Vogels muss größer sein, als die Höhe der Säule, aber kleiner als Die Höhe der Säule + die Lochgröße)
+						liste[i].InHole()//Eigenschaft der Säule wird neu gesetzt: Vogel befindet sich im Loch
+					}else{
+						liste[i].NotInHole()//Eigenschaft der Säule wird neu gesetzt: Vogel befindet sich nicht im Loch
+					}
 			}
 		}
 		
-		//Gravity
 		select{
-			case  <- click_channel:	//Wenn etwas im Channel liegt (Wert egal, da ein Wert im Channel ein Sprung bedeutet)	
-				speed = 0 
-				durationmsall = -75000 //Damit bleibt der Vogel 3fps stehen, bevor er wieder fällt --> natürlichere Bewegung & Flügelschlag sichtbar
-				birdposY -= 70 //Y-Koordinate des Vogels niedriger setzen (Fenster hat oben 0)
+			case  <- click_channel:	
+						
+				speed = 0
+				durationmsall = -75000
+				birdposY -= 70
 				
-				//Vogel soll die obere Grenze des Fensters nicht überschreiten
-				//~ if birdposY < 0 {
-					//~ birdposY = 0
-				//~ }
-				
-				//Da sich etwas verändert hat, soll es geupdatet werden
+				if birdposY < 0 {
+					birdposY = 0
+				}
 				update = true
 				jump = true
 
 			default:				
-				if durationmsall >= 40000 {//Nur alle 40 millisekunden ausführen 
-					factor = float32(durationmsall) / 25000.0 //Falls der Loopdurchlauf länger gedauert hat, wird die Stärke des Fallens entsprechend angepasst				
+				if durationmsall >= 40000 {
+					jump = false 
+
+					factor = float32(durationmsall) / 25000.0					
 					durationmsall = 0
 
-					speed += int(gravity * factor) //Berechneter Faktor wird angewendet
-					birdposY += int(speed) //Y-Koordinate des Vogels 
+					speed += int(gravity * factor)
+					birdposY += int(speed)
 					
-					//verhindern, dass der Vogel unten aus dem Fenster fällt
 					if birdposY > (windowY-height) {
 						birdposY = windowY - height
 						speed = 0
 					}
-					//Da sich etwas verändert hat, soll es geupdatet werden
+
 					update = true
-					jump = false 
 				}
 		}
-		
-		if pillarspwanms > 1250000{ //Alle 1,25 Sekunden soll eine weitere Säule erschaffen werden
-			//Neue Säule erschaffen und der Liste hinzufügen
+		//~ if ended == true{
+			//~ for ended == true {taste, status, mx2, my2 := gfx2.MausLesen1()
+			//~ colorAtMouseR, colorAtMouseG, colorAtMouseB := gfx2.GibPunktfarbe(uint16(mx2), uint16(my2))
+	
+			
+				//~ if status == 1 && taste == 1  && colorAtMouseR == 255 && colorAtMouseG == 188 && colorAtMouseB == 43{			
+					//~ fmt.Println("Restarting...")
+					//~ gfx2.FensterAus ()
+					//~ main()
+					//~ restart()
+					 	
+			//~ }
+		//~ }
+	//~ }
+		if pillarspwanms > 1250000{
+			gfx2.Stiftfarbe(34, 139, 34)
 			var s saeulen.Saeule = saeulen.New()
+			//~ s = saeulen.New()
 			s.SetzeZufallswerte()
 			liste = append(liste,s)
 			pillarspwanms = 0
 		}
 		
-		if pillarmovems >= 10000 && len(liste) > 0{ //Alle 10 Millisekunden sollen die Säulen bewegt werden
+		if pillarmovems >= 10000 && len(liste) > 0{
+
 			var nliste []saeulen.Saeule
 			
-			//Jedes Jede Säule aus der Liste bewegen
 			for i:=0;i<len(liste);i++{
 				liste[i].Move()
 				
-				if liste[i].GibXWert() < 100 && liste[i].GibPassed() == false{ //Abfrage ob die Säule den Vogel schon passiert hat
-					//Akutalisiere den Counter
+				if liste[i].GibXWert() < 100 && liste[i].GibPassed() == false{
 					counter ++
 					counterstr = strconv.Itoa(counter)
-					
-					//Wert der Säule aktualisieren um das mehrmalige Zählen zu verhindern
 					liste[i].Passed()
 					}
-				//Liste löschen, wenn diese aus dem Fenster verschwunden ist
+					
 				if liste[i].GibXWert() < 10000 {
 					nliste = append(nliste,liste[i])
 				}
@@ -211,61 +193,66 @@ func main(){
 			}
 			liste = nliste
 			pillarmovems = 0
-			//Da sich etwas verändert hat, soll es geupdatet werden
 			update = true
 		}
 		
 		for i:=0;i<len(liste);i++{ //Alle Säulen werden auf kollision mit dem Vogel überprüft. Es kann nur eine Säule gleichzeitig geben
 			touchAbove, touchBelow, touchoutside = collision(birdposX, birdposY, width, height,touchAbove, touchBelow, touchoutside, liste[i])
 			if touchAbove || touchBelow || touchoutside{
-				//Anpassen der Y-Werte des Vogels für den Endscreen, je nach Berührung
 				if touchAbove{
 					endbirdposY = int(liste[i].GibHoehe())
 					end = true
-					break //Schleifendurchlauf kann unterbrochen werden, da das Spiel bei einer Kollision sofort beendet wird und es keine zweite Säule geben kann und darf, die berührt wird
+					break
 				}else if touchBelow{
 					endbirdposY = int(liste[i].GibHoehe() + liste[i].GibLoch()) - height
 					end = true
-					break //Schleifendurchlauf kann unterbrochen werden, da das Spiel bei einer Kollision sofort beendet wird und es keine zweite Säule geben kann und darf, die berührt wird
+					break
 				}else if touchoutside{
 					endbirdposY = birdposY
-					end = true 
-					break //Schleifendurchlauf kann unterbrochen werden, da das Spiel bei einer Kollision sofort beendet wird und es keine zweite Säule geben kann und darf, die berührt wird
+					end = true
+					break
 				
 				}
 				break //Schleifendurchlauf kann unterbrochen werden, da das Spiel bei einer Kollision sofort beendet wird und es keine zweite Säule geben kann und darf, die berührt wird
 			}
+			fmt.Println("Keine collision")
 		}
 		
-		if update && end == false{ //Wenn das Fenster nur geupdatet werden soll, das Spiel aber nicht vorbei ist
-			//Hintergrund
-			clear()
+		if update && end == false{ 
 			
-			//Vogel neu reinladen --> Es wird zwischen den beiden Bildern, je nach Sprung oder nicht unterschieden
+			gfx2.Stiftfarbe(135,206,250)
+			gfx2.Cls()
+			
 			if jump{
 				gfx2.LadeBildMitColorKey (uint16(birdposX), uint16(birdposY) , "./images/resized/Frame-2.bmp", uint8(135), uint8(206),uint8(250))
 			}else{
 				gfx2.LadeBildMitColorKey (uint16(birdposX), uint16(birdposY) , "./images/resized/Frame-1.bmp", uint8(135), uint8(206),uint8(250))			
 			}
-			//Säulen zeichnen
 			gfx2.Stiftfarbe(0,0,0)
+
 			for i:=0;i<len(liste);i++{
 			   liste[i].Draw(birdposX, width)
 			}
-			
-			//Counter zeichnen
+
 			gfx2.Stiftfarbe(255,255,85)
-			gfx2.SchreibeFont(uint16(475), uint16(25), counterstr)
+			gfx2.SchreibeFont(uint16(450), uint16(25), counterstr)
 			
-			//Updaten 
 			gfx2.UpdateAn()
 			gfx2.UpdateAus()
-			
 			update = false
-		}
-		
-		if end{			
-			clear()
+			
+			}
+		if end{		
+			//~ ended = true
+			fmt.Println("Ende erreicht")
+			fmt.Println("touchAbove:", touchAbove)
+			fmt.Println("touchBelow:", touchBelow)
+			fmt.Println("touchoutside:", touchoutside)
+			
+			gfx2.SetzeFont("./schriftart.ttf", 150)
+			
+			gfx2.Stiftfarbe(135,206,250)
+			gfx2.Cls()
 			
 			gfx2.Stiftfarbe(0,0,0)
 			for i:=0;i<len(liste);i++{
@@ -281,23 +268,18 @@ func main(){
 			gfx2.Stiftfarbe(255,255,0)
 			gfx2.SchreibeFont(uint16(400), uint16(326), counterstr)
 			
-			gfx2.LadeBildMitColorKey(uint16(251), uint16(600), "./playbutton.bmp", uint8(255), uint8(0),uint8(0))
-			gfx2.LadeBildMitColorKey(uint16(501), uint16(600), "./quitbutton.bmp", uint8(255), uint8(0),uint8(0))
-			gfx2.SetzeFont("./schriftart.ttf", 70)
-			gfx2.Stiftfarbe(255,230,5)
-			gfx2.SchreibeFont(uint16(540), uint16(620), "QUIT")
-			gfx2.SetzeFont("./schriftart.ttf", 150)
+			gfx2.LadeBildMitColorKey(uint16(0), uint16(595), "./playbutton.bmp", uint8(255), uint8(0),uint8(0))
+			gfx2.LadeBildMitColorKey(uint16(590), uint16(595), "./quitbutton.bmp", uint8(255), uint8(0),uint8(0))
 			gfx2.UpdateAn()
-					
-			for{
-				mtaste, mstatus, mx, my:=gfx2.MausLesen1()
-				if mstatus == 1 || mstatus == -1{
-					if mtaste == 1 && mx >= 501 && mx <= 751 && my >= 600 && my <= 775{
-						gfx2.FensterAus()
-						break  
-					}else if mtaste == 1 && mx >= 251 && mx <= 376 && my >= 600 && my <= 775{
+			
+			//~ time.Sleep(1000 * time.Millisecond)		
+			
+			for end == true {
+				taste, status, mx2, my2:= gfx2.MausLesen1()
+					if taste == 1 && status == 1 && mx2 > 0 && mx2 < 205 && my2 > 595 && my2 < 800 {
+						var nl24 []saeulen.Saeule
 						firstRound = true
-						liste = leereliste
+						liste = nl24
 						duration = 0
 						durationms = 0
 						durationmsall = 0
@@ -311,11 +293,30 @@ func main(){
 						touchoutside = false
 						counterstr = ""
 						counter = 0
-						break
+						goto start
+			
+		}
+				if taste == 1 && status == 1 && mx2 > 590 && mx2 < 1000 && my2 > 595 && my2 < 800 {
+					gfx2.FensterAus()
+					
+					
 					}
-				}
-			}
-		}//If end{}
+		
+		
+		
+		
+		
+	}
+			//~ for{
+				//~ taste, status,_,_:=gfx2.MausLesen1()
+				//~ if status == 1 && taste == 1 {
+					//~ break
+				//~ }
+			//~ }
+			
+			
+			
+			}//If end{}
 		
 		
 	}//For Loop Ende	
@@ -323,17 +324,19 @@ func main(){
 	
 func collision(birdposX int, birdposY int, width int, height int, touchAbove bool, touchBelow bool, touchoutside bool, s saeulen.Saeule) (bool, bool, bool){	
 
-	if birdposX + width >= int(s.GibXWert()) && birdposX-5 <= int(s.GibXWert() + s.GibBreite()){ //x-Koordinaten werden vgerglichen --> Wahr, wenn der  Vogel und die Säule sich irgendwelche x-Koordinaten teilen
+	if birdposX + width >= int(s.GibXWert()) && birdposX <= int(s.GibXWert() + s.GibBreite()){ //x-Koordinaten werden vgerglichen --> Wahr, wenn der  Vogel und die Säule sich irgendwelche x-Koordinaten teilen
 		if birdposY < int(s.GibHoehe()) || birdposY + height > int(s.GibHoehe() + s.GibLoch()){ //y-Koordinaten werden verglichen --> Wahr, wenn sich der Vogel nicht im Loch befindet --> Vogel muss die Säule berühren
 			if s.GibbirdInHole(){//alter Wert wird überprüft --> Wahr, wenn der Vogel sich vor den neu berechneten Werten im Loch aufhielt --> Vogel muss aus dem Loch aus in die Säule gesprungen/gefallen sein)
 				if birdposY < int(s.GibHoehe()){//Wahr, wenn der Vogel die Säule oben berührt (y-Koordinaten des Vogels müssen kleiner sein als die Säulenhöhe)
+					fmt.Println("Kollision oben")
 					touchAbove = true
-				}else if birdposY + height > int(s.GibHoehe() + s.GibLoch()){//Wahr, wenn der Vogel die Säule unten berührt (y-Koordinaten des Vogels müssen größer sein als die Säulenhöhe + Lochgröße)
+				}else if birdposY + height > int(s.GibHoehe() + s.GibLoch()){//Wahr, wenn der Vogel die Säule unten berührt
+					fmt.Println("Kollision oben")
 					touchBelow = true
 				}
 			}else{//Wird ausgeführt, wenn der alte Wert falsch war --> Vogel ist nicht aus einem Loch in die Säule gespringen/gefallen
 				touchoutside = true
-				s.Touch()//Wird verwendet um nachher die Säule zu identifizieren, die berührt wurde, um ein eine Überlappung des Vogels mit der Säule zu vermeiden
+				s.Touch()
 			}
 		}
 		
@@ -343,27 +346,12 @@ func collision(birdposX int, birdposY int, width int, height int, touchAbove boo
 
 func mauslesen(click_channel chan int){
 	for{	
-		mtaste, mstatus,_,_:=gfx2.MausLesen1()
-		if mstatus == 1 && mtaste == 1{
-			click_channel <- 1
-		}
-	}
-}
-
-func tastaturlesen(click_channel chan int){
-	for{
-		ttaste, tstatus,_:= gfx2.TastaturLesen1()
-		if tstatus == 1 && ttaste == 32 {
+		taste, status,_,_:=gfx2.MausLesen1()
+			if status == 1 && taste == 1 {
 				click_channel <- 1
-		}
+				}
 	}
 }
-
-func clear(){
-	gfx2.Stiftfarbe(135,206,250)
-	gfx2.Cls()
-}
-
 
 func scale_Image(windowY int) (int,int){
 	
@@ -407,3 +395,44 @@ func scale_Image(windowY int) (int,int){
 			}
 		return height, width
 }
+
+//~ func restart() {
+	//~ // Get the path to the current executable
+	//~ fmt.Println("entered restart")
+	//~ executable, err := os.Executable()
+	//~ if err != nil {
+		//~ fmt.Println("Error getting executable path:", err)
+		//~ return
+	//~ }
+
+	//~ // Command to restart the script
+	//~ cmd := exec.Command(executable)
+
+	//~ // Pass the original command-line arguments to the new process
+	//~ cmd.Args = append(cmd.Args, os.Args[1:]...)
+
+	//~ // Set the correct environment variables for Windows
+	//~ if runtime.GOOS == "windows" {
+		//~ cmd.Env = os.Environ()
+	//~ }
+
+	//~ // Close standard input/output streams
+	//~ cmd.Stdin = nil
+	//~ cmd.Stdout = nil
+	//~ cmd.Stderr = nil
+
+	
+
+	//~ // Wait for a short duration before exiting the current process
+	//~ time.Sleep(500 * time.Millisecond)
+
+	//~ // Exit the current process
+	//~ os.Exit(0)
+	//~ // Start the new process
+	//~ err = cmd.Start()
+	//~ if err != nil {
+		//~ fmt.Println("Error restarting process:", err)
+		//~ return
+	//~ }
+//~ }
+

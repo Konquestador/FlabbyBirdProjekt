@@ -2,7 +2,7 @@ package main
 
 import (
 	"gfx2"
-	//~ "fmt"
+	"fmt"
 	//~ "time"
 )
 
@@ -14,7 +14,9 @@ func main(){
 	//~ gfx2.Kreis(uint16(180), uint16(464) ,uint16(64))
 	//~ r,g,b := gfx2.GibPunktfarbe(uint16(100),uint16(405))
 	//~ fmt.Println(r,g,b)
-	gfx2.TastaturLesen1 ()
+	ttaste, tstatus,_:= gfx2.TastaturLesen1()
+	fmt.Println(ttaste)
+	fmt.Println(tstatus)
 }
 
 
