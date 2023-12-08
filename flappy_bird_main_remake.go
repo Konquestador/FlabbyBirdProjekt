@@ -264,23 +264,28 @@ func main(){
 			update = false
 		}
 		
-		if end{			
+		if end{ //Endscreen
+			//Hintergrund
 			clear()
 			
+			//Säulen ein letztes mal zeichnen
 			gfx2.Stiftfarbe(0,0,0)
 			for i:=0;i<len(liste);i++{
 			   liste[i].Draw(birdposX, width)
 			}
 			
-			
+			//Vogel mit den angepasster Y-Koordinate reinladen
 			gfx2.LadeBildMitColorKey (uint16(birdposX), uint16(endbirdposY) , "./images/resized/Frame-1.bmp", uint8(135), uint8(206),uint8(250))			
 			
+			//Game Over Schrift reinschreiben
 			gfx2.Stiftfarbe(255,0,0)
 			gfx2.SchreibeFont(uint16(70), uint16(76), "GAME OVER")
 			
+			//Counter reinschreiben
 			gfx2.Stiftfarbe(255,255,0)
 			gfx2.SchreibeFont(uint16(400), uint16(326), counterstr)
 			
+			//Buttons reinladen
 			gfx2.LadeBildMitColorKey(uint16(251), uint16(600), "./playbutton.bmp", uint8(255), uint8(0),uint8(0))
 			gfx2.LadeBildMitColorKey(uint16(501), uint16(600), "./quitbutton.bmp", uint8(255), uint8(0),uint8(0))
 			gfx2.SetzeFont("./schriftart.ttf", 70)
@@ -288,15 +293,20 @@ func main(){
 			gfx2.SchreibeFont(uint16(540), uint16(620), "QUIT")
 			gfx2.SetzeFont("./schriftart.ttf", 150)
 			gfx2.UpdateAn()
-					
+			
+			//Abfrage und Verarbeitung der Mauseingabe
 			for{
 				mtaste, mstatus, mx, my:=gfx2.MausLesen1()
 				if mstatus == 1 || mstatus == -1{
-					if mtaste == 1 && mx >= 501 && mx <= 751 && my >= 600 && my <= 775{
+					if mtaste == 1 && mx >= 501 && mx <= 751 && my >= 600 && my <= 775{//Quit-Button --> Fenster schließen
 						gfx2.FensterAus()
 						break  
-					}else if mtaste == 1 && mx >= 251 && mx <= 376 && my >= 600 && my <= 775{
+					}else if mtaste == 1 && mx >= 251 && mx <= 376 && my >= 600 && my <= 775{//Play-Button --> Variablen zurücksetzen und den Loop von Vorne beginnen 
 						firstRound = true
+						end = false
+						touchAbove = false
+						touchBelow = false
+						touchoutside = false
 						liste = leereliste
 						duration = 0
 						durationms = 0
@@ -305,21 +315,15 @@ func main(){
 						pillarmovems = 0
 						birdposX = 100
 						birdposY = windowY/10
-						end = false
-						touchAbove = false
-						touchBelow = false
-						touchoutside = false
 						counterstr = ""
 						counter = 0
 						break
 					}
 				}
 			}
-		}//If end{}
-		
-		
-	}//For Loop Ende	
-}//Func Main Ende
+		}
+	}
+}
 	
 func collision(birdposX int, birdposY int, width int, height int, touchAbove bool, touchBelow bool, touchoutside bool, s saeulen.Saeule) (bool, bool, bool){	
 
@@ -341,6 +345,7 @@ func collision(birdposX int, birdposY int, width int, height int, touchAbove boo
 	return touchAbove, touchBelow, touchoutside //Gibt immer die Werte zurück
 }
 
+//Mauseingaben abfragen und verarbeiten
 func mauslesen(click_channel chan int){
 	for{	
 		mtaste, mstatus,_,_:=gfx2.MausLesen1()
@@ -350,6 +355,7 @@ func mauslesen(click_channel chan int){
 	}
 }
 
+//Tastatureingaben abfragen und verarbeiten
 func tastaturlesen(click_channel chan int){
 	for{
 		ttaste, tstatus,_:= gfx2.TastaturLesen1()
@@ -359,14 +365,16 @@ func tastaturlesen(click_channel chan int){
 	}
 }
 
+//Fenster aufräumen
 func clear(){
 	gfx2.Stiftfarbe(135,206,250)
 	gfx2.Cls()
 }
 
-
+//Bilder an die Fenstergröße anpassen
 func scale_Image(windowY int) (int,int){
-	
+		
+		//Pfade der Bilder
 		image_list := []string{"./images/original/Frame-1.bmp", "./images/original/Frame-2.bmp"}
 		rescaled_image_list := []string{"./images/resized/Frame-1.bmp", "./images/resized/Frame-2.bmp"}
 		
