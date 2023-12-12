@@ -107,7 +107,7 @@ func main(){
 	clear()
 	
 	//Vogel in die Mitte des Fensters laden
-	gfx2.LadeBildMitColorKey (uint16(birdposX), uint16(birdposY) , "./images/resized/Frame-1.bmp", uint8(135), uint8(206),uint8(250))
+	gfx2.LadeBildMitColorKey (uint16(birdposX), uint16(birdposY) , "./images/resized/Frame-12.bmp", uint8(135), uint8(206),uint8(250))
 	
 	gfx2.UpdateAn()
 	
@@ -375,7 +375,7 @@ func clear(){
 func scale_Image(windowY int) (int,int){
 		
 		//Pfade der Bilder
-		image_list := []string{"./images/original/Frame-1.bmp", "./images/original/Frame-2.bmp"}
+		image_list := []string{"./images/original/Frame-12.bmp", "./images/original/Frame-22.bmp"}
 		rescaled_image_list := []string{"./images/resized/Frame-1.bmp", "./images/resized/Frame-2.bmp"}
 		
 		//Verhältnis WindowY <--> BirdX = 0,1375 == 1375 / 10000 (um float zu vermeiden)
